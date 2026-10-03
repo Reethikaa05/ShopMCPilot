@@ -1,0 +1,364 @@
+[
+  {
+    "name": "woo_connection_status",
+    "description": "Verify credentials and show rate-limiter health. Call first if other tools fail.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_list_products",
+    "description": "List products with filters. Returns compact rows; use woo_get_product for detail.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "1-based page",
+          "minimum": 1,
+          "default": 1
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Items per page (max 50)",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20
+        },
+        "search": {
+          "type": "string",
+          "description": "Free-text search"
+        },
+        "stock_status": {
+          "type": "string",
+          "description": "instock | outofstock | onbackorder",
+          "enum": [
+            "instock",
+            "outofstock",
+            "onbackorder"
+          ]
+        },
+        "category": {
+          "type": "integer",
+          "description": "Category ID",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "description": "publish | draft | private",
+          "enum": [
+            "publish",
+            "draft",
+            "private"
+          ]
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_get_product",
+    "description": "Get one product by numeric ID.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Product ID",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_search_products",
+    "description": "Fuzzy-ish product search by name/SKU (published only).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Name or SKU"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max results",
+          "minimum": 1,
+          "maximum": 25,
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_list_orders",
+    "description": "List orders with filters. Customer PII is masked by default.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "description": "1-based page",
+          "minimum": 1,
+          "default": 1
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Items per page (max 50)",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20
+        },
+        "status": {
+          "type": "string",
+          "description": "pending|processing|on-hold|completed|cancelled|refunded|failed"
+        },
+        "after": {
+          "type": "string",
+          "description": "ISO8601 lower bound on created date, e.g. 2025-01-31T00:00:00"
+        },
+        "before": {
+          "type": "string",
+          "description": "ISO8601 upper bound"
+        },
+        "customer": {
+          "type": "integer",
+          "description": "WooCommerce customer ID",
+          "minimum": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_get_order",
+    "description": "Get one order (line items, payment, masked customer) by ID.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Order ID",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_search_orders",
+    "description": "Find orders by order number (#1234) or free text.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Order number or text"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max results",
+          "minimum": 1,
+          "maximum": 25,
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_order_timeline",
+    "description": "Chronological story of an order (placement, staff/system notes, status). Best tool for 'where is my order'.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Order ID",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_inventory_report",
+    "description": "Out-of-stock and low-stock SKUs among stock-managed products.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "threshold": {
+          "type": "integer",
+          "description": "Low-stock threshold",
+          "minimum": 0,
+          "maximum": 1000,
+          "default": 5
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_stockout_forecast",
+    "description": "Predict which SKUs sell out within the horizon, using recent sales velocity; includes reorder suggestions.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "lookback_days": {
+          "type": "integer",
+          "description": "Days of sales history",
+          "minimum": 7,
+          "maximum": 90,
+          "default": 30
+        },
+        "horizon_days": {
+          "type": "integer",
+          "description": "Forecast horizon",
+          "minimum": 1,
+          "maximum": 60,
+          "default": 14
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_order_health",
+    "description": "Detect stuck orders, high failure/refund rates and statistical outliers; returns plain-language flags.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "days": {
+          "type": "integer",
+          "description": "Window in days",
+          "minimum": 1,
+          "maximum": 60,
+          "default": 14
+        },
+        "stuck_days": {
+          "type": "integer",
+          "description": "Age that counts as stuck",
+          "minimum": 1,
+          "maximum": 30,
+          "default": 3
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  },
+  {
+    "name": "woo_sales_summary",
+    "description": "Revenue, AOV, daily trend and top products for the last N days.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "days": {
+          "type": "integer",
+          "description": "Window in days",
+          "minimum": 1,
+          "maximum": 90,
+          "default": 7
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": true
+    }
+  }
+]
